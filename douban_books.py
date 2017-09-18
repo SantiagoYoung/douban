@@ -3,13 +3,17 @@ from lxml import etree
 from pymongo import MongoClient
 from urllib.parse import quote
 import random
+import re
+
 
 conn = MongoClient('localhost', 27017)
 db = conn.douban
-user_agent =[{'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'},
+user_agent = [
+        {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'},
         {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.12 Safari/535.11'},
         {'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)'},
-        {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36'}]
+        {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36'}
+        ]
 
 UserAgent = []
 for i in user_agent:
@@ -21,9 +25,7 @@ for pro in db.proxy.find():
     proxy.append(ip)
 
 
-
 class Books:
-
     def __init__(self):
         self.tag_url = "https://book.douban.com/tag/?view=cloud"
 
@@ -55,6 +57,6 @@ book_pub = html.xpath("//li[@class='subject-item']/div[@class='info']/div[@class
 book_info = html.xpath("//li[@class='subject-item']/div[@class='info']/p/text()")[0].strip()
 rate = html.xpath("//span[@class='rating_nums']/text()")[0].strip()
 comment_num = html.xpath("//li[@class='subject-item']//span[@class='pl']/text()")[0].strip()
-import re
+
 comment_num = re.search(r'(\d+)', comment_num).group()
 print(book_url, book_img, book_title, book_pub, book_info, rate, comment_num)
